@@ -17,11 +17,18 @@ pipeline
                 sh 'mvn package'
             }
         }
+        script {
+            try {
         stage('ContinuousDeployment')
         {
             steps
             {
                deploy adapters: [tomcat9(credentialsId: 'bfb67f1d-2f4e-430c-bb8d-30584116bd00', path: '', url: 'http://172.31.51.212:9090')], contextPath: 'test1', war: '**/*.war'
+            }
+        }
+            }
+            catch (e) {
+                echo e.getmessage()
             }
         }
         stage('ContinuousTesting')
@@ -46,12 +53,4 @@ pipeline
         {
             mail bcc: '', body: 'Continuous Integration has failed', cc: '', from: '', replyTo: '', subject: 'CI Failed', to: 'selenium.saikrishna@gmail.com'
         }
-       
     }
-    
-    
-    
-    
-    
-    
-}
